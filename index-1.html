@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TYM · send anonymous messages</title>
+<meta property="og:title" content="send me anonymous messages!">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;background:#ff3d7f linear-gradient(160deg,#ff3d7f,#ff7a2f) fixed;color:#fff;min-height:100vh;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.wrap{max-width:460px;margin:0 auto;padding:20px 16px 48px}
+.brand{text-align:center;font-size:34px;font-weight:900;letter-spacing:2px;margin:4px 0 16px}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab{flex:1;border:0;border-radius:99px;padding:11px;font-weight:700;font-size:15px;background:rgba(255,255,255,.25);color:#fff}
+.tab.on{background:#fff;color:#ff3d7f}
+.card{background:#fff;color:#111;border-radius:22px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.head{padding:16px 18px;display:flex;gap:12px;align-items:center;border-bottom:1px solid #eee}
+.av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#ff3d7f,#ff7a2f);display:grid;place-items:center;font-size:22px;color:#fff;flex:none}
+.head b{display:block;font-size:16px}.head span{font-size:13px;color:#666}
+textarea,input{width:100%;border:0;outline:0;font:inherit;font-size:18px;color:#111;background:#fafafa;padding:16px 18px;border-bottom:1px solid #eee}
+textarea{resize:none;height:140px}
+.note{padding:12px 18px 16px;font-size:12px;color:#777;text-align:center}.err{color:#d11}
+.btn{display:block;width:calc(100% - 32px);margin:14px 16px 0;border:0;border-radius:99px;padding:15px;font-size:18px;font-weight:800;color:#fff;background:#111}
+.btn:disabled{opacity:.35}
+.btn.w{background:#fff;color:#ff3d7f;width:100%;margin:0 0 14px}
+.btn.s{width:auto;margin:0;padding:9px 16px;font-size:15px}
+.link{display:block;text-align:center;margin-top:16px;color:#fff;font-weight:700;background:none;border:0;font-size:15px;width:100%;text-decoration:underline}
+.msg{background:#fff;color:#111;border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 6px 18px rgba(0,0,0,.15)}
+.msg p{margin:0 0 8px;font-size:18px;line-height:1.35;overflow-wrap:anywhere}
+.msg small{color:#888;font-size:12px}
+.msg.r{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:700}
+.badge{display:inline-block;background:#111;color:#fff;border-radius:99px;padding:2px 10px;font-size:12px;margin-bottom:8px}
+.empty{text-align:center;padding:30px 10px;font-size:17px}
+.big{text-align:center;padding:50px 20px;color:#111}.big h2{margin:8px 0}
+.seg{display:flex;gap:8px;margin-bottom:14px}
+/* chat room */
+.room{display:flex;flex-direction:column;height:calc(100vh - 40px);height:calc(100dvh - 40px)}
+.rh{display:flex;align-items:center;gap:10px;background:#fff;color:#111;border-radius:18px 18px 0 0;padding:12px 14px}
+.rh b{flex:1;font-size:17px}.rh button{border:0;background:none;font-size:22px}
+#log{flex:1;overflow-y:auto;background:#fff5f0;padding:12px;color:#111}
+.row{display:flex;margin-bottom:8px}.row.me{justify-content:flex-end}
+.bub{max-width:82%;background:#fff;border-radius:16px 16px 16px 4px;padding:9px 12px;font-size:16px;line-height:1.35;box-shadow:0 1px 2px rgba(0,0,0,.12);overflow-wrap:anywhere}
+.row.me .bub{background:linear-gradient(135deg,#ff3d7f,#ff7a2f);color:#fff;border-radius:16px 16px 4px 16px}
+.bub small{display:block;font-size:11px;opacity:.65;margin-top:3px}
+.bub.game{border:2px dashed #ff7a2f;background:#fff;color:#111;font-weight:600}
+.row.me .bub.game{background:#fff;color:#111}
+.tag{font-size:13px;font-weight:800;color:#ff3d7f;margin-bottom:4px}
+.comp{display:flex;gap:8px;background:#fff;padding:10px;border-radius:0 0 18px 18px}
+.comp input{border-radius:99px;padding:11px 16px;font-size:16px;border:1px solid #eee}
+.comp button{border:0;border-radius:50%;width:44px;height:44px;font-size:20px;background:#111;color:#fff;flex:none}
+.comp button.g{background:#fff0e8}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:#fff;color:#111;border-radius:22px 22px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom,0));box-shadow:0 -10px 30px rgba(0,0,0,.25);max-width:460px;margin:0 auto;z-index:5;max-height:75vh;overflow-y:auto}
+.sheet h3{margin:0 0 10px;font-size:18px}
+.gb{display:block;width:100%;text-align:left;border:0;border-radius:14px;padding:14px;margin-bottom:8px;background:#fff0e8;font-size:16px;font-weight:700;color:#111}
+.gb span{display:block;font-weight:500;font-size:13px;color:#777}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.grid button{border:0;border-radius:12px;padding:12px 0;font-size:17px;font-weight:800;background:linear-gradient(135deg,#ff3d7f,#ff7a2f);color:#fff}
+.grid button:disabled{background:#eee;color:#bbb;text-decoration:line-through}
+.leg{font-size:12px;color:#777;margin:0 0 10px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:8px 10px;background:#fff;border-top:1px solid #f3e3dc;flex:none}
+.chip{flex:none;border:0;border-radius:99px;padding:8px 14px;font-size:14px;font-weight:700;background:#fff0e8;color:#c2410c;white-space:nowrap}
+.bub.ai{white-space:pre-wrap}.cpy{display:inline-block;margin-top:6px;border:0;border-radius:99px;padding:4px 12px;font-size:12px;font-weight:700;background:#fff0e8;color:#c2410c}
+#toast{position:fixed;top:calc(10px + env(safe-area-inset-top,0));left:50%;transform:translateX(-50%);background:#111;color:#fff;border-radius:99px;padding:9px 16px;font-size:14px;z-index:9;display:none}
+</style></head>
+<body><div class="wrap" id="app"></div><div id="toast"></div>
+<script>
+/* ====== 1. PASTE YOUR SUPABASE VALUES HERE ====== */
+const SB_URL='https://iibpydnevzjwsrvaeibu.supabase.co';        // e.g. https://abcd1234.supabase.co
+const SB_KEY='sb_publishable_tsu4D2ht6DSTpRbs6I0kJA_TFQzJ68o';   // the anon / publishable key
+/* ================================================ */
+
+const H={apikey:SB_KEY,'Content-Type':'application/json'};
+if(SB_KEY.startsWith('eyJ'))H.Authorization='Bearer '+SB_KEY;
+const app=document.getElementById('app'),q=id=>document.getElementById(id);
+const target=(new URLSearchParams(location.search).get('u')||'').toLowerCase();
+let creds=null;try{creds=JSON.parse(localStorage.getItem('tym')||'null')}catch(e){}
+const S={mode:target?'send':(creds?'app':'home'),tab:'inbox',kind:'message',err:'',msg:'',busy:false,sent:false,creds,inbox:[],rooms:[],room:null,msgs:[],last:0,asked:[],sheet:null,draft:'',ai:false,aim:[],aiBusy:false,aiDraft:''};
+let poll=null;
+
+/* 50 numbered questions: 💕 romantic 🍬 sweet 🤝 friendly 😂 fun 🤔 deep 🔥 flirty */
+const Q=[
+["💕","What was your first impression of me?"],["😂","What’s the funniest thing we’ve ever done together?"],["🍬","What’s one small thing I do that makes you smile?"],["🤝","What do you value most about our bond?"],["🔥","What’s the most romantic thing you could imagine me doing for you?"],
+["🤔","What’s a dream you’ve never told anyone?"],["💕","Describe our perfect date in three words."],["🍬","What song reminds you of me?"],["😂","If we swapped lives for a day, what would you do first?"],["💕","When did you first realize you really liked me?"],
+["🤝","What’s something you’d never say to my face but want me to know?"],["🍬","What’s your favorite memory of us?"],["🤔","What scares you most about love?"],["😂","What nickname would you give me?"],["💕","Cozy night in with me or a surprise adventure?"],
+["🍬","What’s the sweetest thing anyone has ever done for you?"],["🤝","What’s one thing you admire about me?"],["😂","What’s the most embarrassing thing you’ve done around me?"],["💕","What does “home” feel like to you?"],["🤔","Where do you see us in five years?"],
+["🍬","What’s your love language?"],["😂","Rate my cooking, honestly, out of 10."],["💕","What’s your favorite thing about my smile or laugh?"],["🤝","What’s the best advice you’d give me right now?"],["🔥","What’s something about me that gives you butterflies?"],
+["🤔","What’s one thing you’d change about the way we talk?"],["🍬","If you could gift me anything, what would it be?"],["😂","Which movie or show character am I most like?"],["💕","Where would you take me for a surprise trip?"],["🤝","When do you feel closest to me?"],
+["🔥","What’s the cheesiest pick-up line you’d use on me?"],["🍬","What small thing makes your day better instantly?"],["🤔","What’s your biggest fear about us?"],["😂","What’s the weirdest thing you love about me?"],["💕","Would you slow dance with me in the rain?"],
+["🤝","What’s one thing you wish we did more together?"],["🍬","What’s your favorite way to spend a lazy Sunday with me?"],["🔥","Describe me in one emoji and explain why."],["🤔","What’s a lesson I’ve taught you without knowing it?"],["😂","If we were a movie, what would the title be?"],
+["💕","What’s the first thing you’d say if I showed up at your door tonight?"],["🍬","What’s a compliment you’ve wanted to give me?"],["🤝","What’s something you trust me with that you trust few people with?"],["🔥","What’s your idea of the perfect goodnight message?"],["🤔","What would you do with one more day with me?"],
+["😂","What’s your funniest “I told you so” moment with me?"],["💕","What’s one promise you’d make to me?"],["🍬","What do you hope I never change?"],["🤝","What does our connection mean to you in one sentence?"],["🔥","If you could say one thing to me with zero consequences, what would it be?"]];
+const TRUTH=["What’s your most embarrassing moment?","Who was your first crush?","What’s a secret you’ve never told me?","What’s the last lie you told?","What’s your biggest pet peeve about me?","What’s the silliest thing you’re afraid of?","Which text have you reread the most?","What’s a habit of yours you’d never admit in public?","Who do you stalk on social media the most?","What’s the most childish thing you still do?","What’s the best compliment you’ve ever received?","What’s one thing you want to try before you turn 30?"];
+const DARE=["Send a voice note singing your favorite song.","Change your profile pic to a funny face for 10 minutes.","Send the 5th photo in your gallery (no cheating).","Type your next 3 messages with your eyes closed.","Say something sweet about me in 3 different languages.","Send a selfie making your silliest face.","Do 10 jumping jacks and send proof.","Talk like a pirate for the next 5 messages.","Send a voice note doing your best villain laugh.","Write a 4-line poem about me, right now.","Send your most used emoji 10 times.","Tell me a joke so bad I have to react."];
+
+const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const ago=t=>{const m=Math.floor((Date.now()-new Date(t))/6e4);if(m<1)return'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);return h<24?h+'h ago':Math.floor(h/24)+'d ago'};
+const myLink=n=>location.origin+location.pathname+'?u='+n;
+const cr=()=>({p_u:S.creds.u,p_p:S.creds.p});
+function toast(t){const e=q('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2200)}
+async function rpc(fn,args){const r=await fetch(SB_URL+'/rest/v1/rpc/'+fn,{method:'POST',headers:H,body:JSON.stringify(args)});const t=await r.text();if(!r.ok)throw new Error(t);return t?JSON.parse(t):null}
+async function post(u,kind,body){const r=await fetch(SB_URL+'/rest/v1/messages',{method:'POST',headers:{...H,Prefer:'return=minimal'},body:JSON.stringify({username:u,kind,body})});if(!r.ok)throw new Error(await r.text())}
+
+/* ---------- views ---------- */
+function vSend(){
+  const c=S.kind==='confession';
+  const seg='<div class="seg"><button class="tab '+(!c?'on':'')+'" data-a="kind" data-k="message">💬 Message</button><button class="tab '+(c?'on':'')+'" data-a="kind" data-k="confession">🤫 Confession</button></div>';
+  if(S.sent)return '<div class="card big"><div style="font-size:54px">🎉</div><h2>Sent!</h2><div style="color:#666">They won’t know it was you.</div><button class="btn" data-a="again">Send another</button><br></div><button class="link" data-a="getown">Get your own TYM link</button>';
+  return seg+'<div class="card"><div class="head"><div class="av">'+(c?'🤫':'💬')+'</div><div><b>@'+esc(target)+'</b><span>🔒 '+(c?'send anonymous confessions!':'send anonymous messages!')+'</span></div></div>'+
+  '<textarea id="t" maxlength="500" placeholder="'+(c?'confess anything..':'send anonymous messages..')+'"></textarea>'+
+  '<div class="note '+(S.err?'err':'')+'">'+(S.err||'Your '+(c?'confession':'message')+' is sent without your name.')+'</div></div>'+
+  '<button class="btn" id="go" data-a="go" disabled>'+(S.busy?'Sending…':'Send!')+'</button><button class="link" data-a="getown">Get your own TYM link</button>';
+}
+function vAuth(){
+  const l=S.mode==='login';
+  return '<div class="card"><div class="head"><div class="av">🔗</div><div><b>'+(l?'Open your inbox':'Get your link')+'</b><span>'+(l?'username + PIN':'pick a user ID and a PIN')+'</span></div></div>'+
+  '<input id="u" placeholder="user ID (username)" autocapitalize="off" autocomplete="off" maxlength="20"><input id="p" placeholder="PIN (4+ characters)" type="password" maxlength="30">'+
+  '<div class="note '+(S.err?'err':'')+'">'+(S.err||'Keep your PIN safe. You need it to read your messages.')+'</div></div>'+
+  '<button class="btn" data-a="ok">'+(S.busy?'Please wait…':l?'Open inbox':'Create my link')+'</button><button class="link" data-a="sw">'+(l?'New here? Create a link':'Already have a link? Open inbox')+'</button>';
+}
+function fInbox(){
+  if(S.err)return '<div class="empty">'+esc(S.err)+'</div>';
+  if(!S.inbox.length)return '<div class="empty">Nothing yet 👀<br>Share your link to get some!</div>';
+  return S.inbox.map(m=>'<div class="msg">'+(m.kind==='confession'?'<span class="badge">🤫 confession</span>':'')+'<p>'+esc(m.body)+'</p><small>🔒 anonymous · '+ago(m.created_at)+'</small></div>').join('');
+}
+function fRooms(){
+  if(!S.rooms.length)return '<div class="empty">No chat rooms yet.<br>Invite a friend with their user ID 🎮</div>';
+  return S.rooms.map(r=>{
+    const o='@'+esc(r.other);
+    if(r.status==='active')return '<div class="msg r"><span>💬 '+o+'</span><button class="btn s" data-a="open" data-id="'+r.id+'" data-o="'+esc(r.other)+'">Open</button></div>';
+    if(r.mine)return '<div class="msg r"><span>⏳ '+o+'</span><small>waiting for them to accept</small></div>';
+    return '<div class="msg r"><span>🎮 '+o+' invited you</span><button class="btn s" data-a="acc" data-id="'+r.id+'">Accept</button></div>';
+  }).join('');
+}
+function vApp(){
+  const t=S.tab;
+  let pane;
+  if(t==='inbox')pane='<button class="btn w" data-a="cp">Copy my link 🔗</button><div id="il">'+fInbox()+'</div>';
+  else pane='<div class="card"><div class="head"><div class="av">🎮</div><div><b>Your user ID: @'+esc(S.creds.u)+'</b><span>share it so friends can invite you</span></div></div><input id="to" placeholder="friend’s user ID" autocapitalize="off" autocomplete="off"><div class="note '+(S.err?'err':'')+'">'+(S.err||S.msg||'Invite a friend to play truth or dare &amp; number games')+'</div></div><button class="btn" data-a="inv">Invite to chat game</button><div style="height:16px"></div><div id="rl">'+fRooms()+'</div>';
+  return '<div class="tabs"><button class="tab '+(t==='inbox'?'on':'')+'" data-a="tab" data-t="inbox">📥 Inbox</button><button class="tab '+(t==='chat'?'on':'')+'" data-a="tab" data-t="chat">🎮 Games</button><button class="tab" data-a="ai">✨ AI</button></div>'+pane+'<button class="link" data-a="out">Log out</button>';
+}
+function bub(m){
+  const me=m.sender===S.creds.u;let inner;
+  if(m.kind==='text')inner=esc(m.body);
+  else{const t={truth:'🎭 Truth',dare:'🔥 Dare',number:'🔢 Number #'+(m.meta&&m.meta.n)}[m.kind]||'';inner='<div class="tag">'+t+'</div>'+esc(m.body)}
+  return '<div class="row '+(me?'me':'')+'"><div class="bub '+(m.kind!=='text'?'game':'')+'">'+inner+'<small>'+(me?'':'@'+esc(m.sender)+' · ')+new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</small></div></div>';
+}
+function gridHtml(){let h='';for(let i=1;i<=50;i++)h+='<button data-a="pick" data-n="'+i+'"'+(S.asked.includes(i)?' disabled':'')+'>'+i+'</button>';return h}
+function vRoom(){
+  let sheet='';
+  if(S.sheet==='menu')sheet='<div class="sheet"><h3>🎮 Pick a game</h3><button class="gb" data-a="truth">🎭 Truth<span>Get a random truth question</span></button><button class="gb" data-a="dare">🔥 Dare<span>Get a random dare to do</span></button><button class="gb" data-a="numgame">🔢 Number Game<span>50 questions: pick a number, ask your friend. Each number once!</span></button><button class="link" style="color:#999" data-a="close">Close</button></div>';
+  if(S.sheet==='num')sheet='<div class="sheet"><h3>🔢 Number Game · <span id="left">'+(50-S.asked.length)+'</span> left</h3><p class="leg">💕 romantic · 🍬 sweet · 🤝 friendly · 😂 fun · 🤔 deep · 🔥 flirty. Pick a number to ask it, but nobody can see the vibe first 😉</p><div class="grid" id="grid">'+gridHtml()+'</div><button class="gb" style="margin-top:12px;text-align:center" data-a="rand">🎲 Surprise me</button><button class="link" style="color:#999" data-a="close">Close</button></div>';
+  return '<div class="room"><div class="rh"><button data-a="back">←</button><b>@'+esc(S.room.other)+'</b><span>🎮</span></div><div id="log">'+S.msgs.map(bub).join('')+'</div><div class="comp"><button class="g" data-a="game">🎮</button><input id="ci" placeholder="Message" value="'+esc(S.draft)+'" autocomplete="off"><button data-a="text">➤</button></div>'+sheet+'</div>';
+}
+
+/* ---------- TYM AI ---------- */
+const AIL='<button class="link" data-a="ai">✨ Ask TYM AI</button>';
+const CHIPS=["Romantic good morning 🌅","Sweet goodnight 🌙","How does TYM work? 🤔","Thinking of you 💭","Apology message 🥺","Birthday wish 🎂","Flirty but classy 🔥","Cheer up a friend 🤗","Funny text for my bestie 😂","Missing you message 💌","Good luck message 🍀","Ideas for truth or dare 🎭"];
+function aiBub(m,i){
+  const me=m.role==='user';
+  return '<div class="row '+(me?'me':'')+'"><div class="bub ai">'+esc(m.content)+(!me&&!m.err&&i>=0?'<br><button class="cpy" data-a="aicopy" data-i="'+i+'">Copy</button>':'')+'</div></div>';
+}
+function aiLog(){
+  let h=aiBub({role:'assistant',content:'Hi! I’m TYM AI ✨\nAsk me anything about TYM, or tap an idea below and I’ll write a lovely message for you 💛'},-1);
+  S.aim.forEach((m,i)=>h+=aiBub(m,i));
+  if(S.aiBusy)h+='<div class="row"><div class="bub ai">typing…</div></div>';
+  return h;
+}
+function vAI(){
+  return '<div class="brand">TYM</div><div class="room" style="height:calc(100vh - 100px);height:calc(100dvh - 100px)"><div class="rh"><button data-a="aiback">←</button><b>✨ TYM AI</b></div><div id="log">'+aiLog()+'</div><div class="chips">'+CHIPS.map(c=>'<button class="chip" data-a="aichip" data-p="'+esc(c)+'">'+c+'</button>').join('')+'</div><div class="comp"><input id="ai-in" placeholder="Ask TYM AI anything" value="'+esc(S.aiDraft)+'" autocomplete="off"><button data-a="aisend">➤</button></div></div>';
+}
+function paintAI(){const l=q('log');if(!l)return;l.innerHTML=aiLog();l.scrollTop=l.scrollHeight}
+async function askAI(text){
+  text=text.trim();if(!text||S.aiBusy)return;
+  S.aim.push({role:'user',content:text});S.aiBusy=true;paintAI();
+  try{
+    const msgs=S.aim.filter(m=>!m.err).map(m=>({role:m.role,content:m.content}));
+    const r=await fetch(SB_URL+'/functions/v1/tym-ai',{method:'POST',headers:H,body:JSON.stringify({messages:msgs})});
+    const j=await r.json();if(!r.ok||!j.reply)throw 0;
+    S.aim.push({role:'assistant',content:j.reply});
+  }catch(e){S.aim.push({role:'assistant',content:'Oops, TYM AI is taking a nap 😴 Try again in a moment.',err:true})}
+  S.aiBusy=false;paintAI();
+}
+
+/* ---------- render ---------- */
+function render(){
+  clearInterval(poll);
+  let h='<div class="brand">TYM</div>';
+  if(S.ai)h=vAI();
+  else if(S.mode==='send')h+=vSend()+AIL;
+  else if(S.mode==='home'||S.mode==='login')h+=vAuth()+AIL;
+  else if(S.room)h=vRoom();
+  else h+=vApp();
+  app.innerHTML=h;
+  if(S.ai){const l=q('log');l.scrollTop=l.scrollHeight}
+  else if(S.mode==='app'){
+    if(S.room){const l=q('log');l.scrollTop=l.scrollHeight;loadMsgs();poll=setInterval(loadMsgs,2000)}
+    else if(S.tab==='inbox'){loadInbox();poll=setInterval(loadInbox,15000)}
+    else{loadRooms();poll=setInterval(loadRooms,5000)}
+  }
+}
+async function loadInbox(){try{const r=await rpc('get_messages',{p_username:S.creds.u,p_pin:S.creds.p});if(Array.isArray(r)){S.inbox=r;S.err=''}}catch(e){S.err='Couldn’t load messages.'}if(q('il'))q('il').innerHTML=fInbox()}
+async function loadRooms(){try{const r=await rpc('my_rooms',cr());if(Array.isArray(r))S.rooms=r}catch(e){}if(q('rl'))q('rl').innerHTML=fRooms()}
+async function loadMsgs(){
+  if(!S.room)return;
+  try{
+    const r=await rpc('room_msgs',{...cr(),p_room:S.room.id,p_since:S.last});
+    if(!Array.isArray(r)||!r.length)return;
+    r.forEach(m=>{S.msgs.push(m);S.last=Math.max(S.last,m.id);if(m.kind==='number'&&m.meta&&m.meta.n&&!S.asked.includes(m.meta.n))S.asked.push(m.meta.n)});
+    const lg=q('log');if(!lg)return;
+    const end=lg.scrollHeight-lg.scrollTop-lg.clientHeight<90;
+    lg.insertAdjacentHTML('beforeend',r.map(bub).join(''));
+    if(end)lg.scrollTop=lg.scrollHeight;
+    if(q('grid')){q('grid').innerHTML=gridHtml();q('left').textContent=50-S.asked.length}
+  }catch(e){}
+}
+function roomUI(){const c=q('ci');if(c)S.draft=c.value;app.innerHTML=vRoom();const l=q('log');l.scrollTop=l.scrollHeight}
+
+/* ---------- actions ---------- */
+async function say(kind,body,n){
+  try{const ok=await rpc('say',{...cr(),p_room:S.room.id,p_kind:kind,p_body:body,p_n:n==null?null:n});
+    if(ok===false){toast('That number was already picked 😅');if(n&&!S.asked.includes(n))S.asked.push(n)}}
+  catch(e){toast('Couldn’t send. Try again.')}
+  await loadMsgs();
+}
+function randFrom(list,kind){const used=S.msgs.filter(m=>m.kind===kind).map(m=>m.body);const f=list.filter(x=>!used.includes(x));const p=f.length?f:list;return p[Math.floor(Math.random()*p.length)]}
+async function sendPublic(){
+  const t=q('t').value.trim();if(!t||S.busy)return;
+  S.busy=true;S.err='';render();
+  try{await post(target,S.kind,t);S.sent=true}
+  catch(e){S.err=/foreign key|23503/.test(e.message)?'This link doesn’t exist.':'Couldn’t send. Try again.'}
+  S.busy=false;render();
+}
+async function auth(){
+  const u=q('u').value.trim().toLowerCase(),p=q('p').value;
+  if(!/^[a-z0-9_.]{3,20}$/.test(u)){S.err='User ID: 3-20 letters, numbers, _ or .';return render()}
+  if(p.length<4){S.err='PIN must be at least 4 characters.';return render()}
+  S.busy=true;S.err='';render();
+  try{
+    if(S.mode==='home')await rpc('create_profile',{p_username:u,p_pin:p});
+    else if(!(await exists(u,p)))throw 0;
+    S.creds={u,p};try{localStorage.setItem('tym',JSON.stringify(S.creds))}catch(e){}
+    S.mode='app';S.tab='inbox';
+  }catch(e){S.err=S.mode==='home'?(/duplicate|23505/.test(String(e&&e.message))?'That user ID is taken.':'Couldn’t create. Try again.'):'Wrong user ID or PIN.'}
+  S.busy=false;render();
+}
+/* PIN check: inviting yourself fails with 'self' only when the PIN is right */
+async function exists(u,p){try{await rpc('invite',{p_u:u,p_p:p,p_to:u});return false}catch(e){return /self/.test(e.message)}}
+
+async function act(a,d,el){
+  switch(a){
+    case'ai':S.ai=true;render();break;
+    case'aiback':S.ai=false;render();break;
+    case'aichip':askAI(d.p);break;
+    case'aisend':{const c=q('ai-in'),v=c.value;c.value='';S.aiDraft='';askAI(v);break}
+    case'aicopy':try{await navigator.clipboard.writeText(S.aim[+d.i].content);toast('Copied ✅')}catch(e){toast('Press and hold the text to copy')}break;
+    case'kind':S.kind=d.k;S.err='';render();break;
+    case'go':sendPublic();break;
+    case'again':S.sent=false;S.err='';render();break;
+    case'getown':history.replaceState(null,'',location.pathname);location.reload();break;
+    case'ok':auth();break;
+    case'sw':S.mode=S.mode==='login'?'home':'login';S.err='';render();break;
+    case'tab':S.tab=d.t;S.err='';S.msg='';render();break;
+    case'cp':try{await navigator.clipboard.writeText(myLink(S.creds.u));el.textContent='Copied ✅'}catch(e){el.textContent=myLink(S.creds.u)}break;
+    case'out':try{localStorage.removeItem('tym')}catch(e){}S.creds=null;S.room=null;S.inbox=[];S.rooms=[];S.mode='home';render();break;
+    case'inv':{
+      const t=q('to').value.trim().toLowerCase().replace(/^@/,'');if(!t)break;
+      try{await rpc('invite',{...cr(),p_to:t});S.err='';S.msg='Invite sent to @'+t+' ✅'}
+      catch(e){S.msg='';S.err=/nouser/.test(e.message)?'No user with that ID.':/self/.test(e.message)?'That’s your own ID 😄':'Couldn’t invite. Try again.'}
+      render();break}
+    case'acc':try{await rpc('accept_invite',{...cr(),p_room:d.id})}catch(e){}loadRooms();break;
+    case'open':S.room={id:d.id,other:d.o};S.msgs=[];S.last=0;S.asked=[];S.sheet=null;S.draft='';render();break;
+    case'back':S.room=null;S.sheet=null;render();break;
+    case'game':S.sheet='menu';roomUI();break;
+    case'close':S.sheet=null;roomUI();break;
+    case'truth':S.sheet=null;roomUI();say('truth',randFrom(TRUTH,'truth'));break;
+    case'dare':S.sheet=null;roomUI();say('dare',randFrom(DARE,'dare'));break;
+    case'numgame':S.sheet='num';roomUI();break;
+    case'pick':{const n=+d.n;if(S.asked.includes(n))break;S.sheet=null;roomUI();say('number',Q[n-1][0]+' '+Q[n-1][1],n);break}
+    case'rand':{const left=[];for(let i=1;i<=50;i++)if(!S.asked.includes(i))left.push(i);if(!left.length){toast('All 50 questions used! 🎉');break}
+      const n=left[Math.floor(Math.random()*left.length)];S.sheet=null;roomUI();say('number',Q[n-1][0]+' '+Q[n-1][1],n);break}
+    case'text':{const c=q('ci'),v=c.value.trim();if(!v)break;c.value='';S.draft='';say('text',v);break}
+  }
+}
+app.onclick=e=>{const b=e.target.closest('[data-a]');if(b)act(b.dataset.a,b.dataset,b)};
+app.oninput=e=>{if(e.target.id==='t'){const g=q('go');g.disabled=!e.target.value.trim()||S.busy}};
+app.onkeydown=e=>{if(e.key==='Enter'&&e.target.id==='ci'){e.preventDefault();act('text',{})}if(e.key==='Enter'&&e.target.id==='ai-in'){e.preventDefault();act('aisend',{})}};
+render();
+</script></body></html>
